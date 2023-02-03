@@ -53,12 +53,12 @@ def printWinner(valid_votes:list):
 def cake():      
   """Find and print the winning cake flavor"""
   wait_for_file = FileSensor(
-       task_id='wait_for_file',
-       poke_interval=5,                   # check every 15 seconds
-       timeout=(30),                  # timeout after 30 minutes
+       task_id='wait_for_file', 
+       poke_interval=5,                    # check every 5 seconds
+       timeout=(30),                       # timeout after seconds
        mode='poke',                        # mode: poke, reschedule
        filepath=FILENAME,                  # file path to check (relative to fs_conn)
-       fs_conn_id='data_fs',               # file system connection (root path)
+       fs_conn_id='data_fs',               # file system connection (/opt/airflow/data)
    )
 
   getVotes_task = getVotes()  
