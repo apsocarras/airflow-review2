@@ -1,4 +1,5 @@
 import os 
+import csv 
 from datetime import datetime
 from airflow import DAG
 from airflow.decorators import dag, task
@@ -18,23 +19,22 @@ FLAVORS = ["lemon", "vanilla", "chocolate",
 
 FILENAME = "votes.csv"
 
-data_fs = FSHook(conn_id='data_fs')     # Make sure this airflow connection exists
-data_dir = data_fs.get_path()           # get its root path
-file_path = os.path.join(data_dir, FILENAME)
-
-
 @task
 def getVotes():
-   """"""
-  data_fs = FSHook(conn_id='data_fs')     # Make sure this airflow connection exists
-  data_dir = data_fs.get_path()           # get its root path
-  file_path = os.path.join(data_dir, FILENAME)
-  
-  return to_return # Passed in decorator function: t2 = func(t1)
+  """Use file sensor to check for a file being added to the data directory; read file and return valid votes"""
 
+  data_fs = FSHook(conn_id='data_fs')     
+  data_dir = data_fs.get_path()           
+  file_path = os.path.join(data_dir, FILENAME)
+
+  with open(file_path, newline='') as csv_file: 
+    vote_reader = csv.reader(csv_file)
+    valid_votes = [flavor[0] for flavor in vote_reader if flavor[0] in FLAVORS]  
+
+  return valid_votes
 
 @task
-def <func2>(<returned>): # in new syntax, callables can take regular arguments, not op_kwargs/op_args
+def (<returned>): # in new syntax, callables can take regular arguments, not op_kwargs/op_args
 # Here, we have the parameter set to receive an XCom key called the 'return_value'
    """"""
    print(f"got XCom return value: {<returned>}")
