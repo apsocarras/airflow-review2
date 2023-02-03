@@ -28,7 +28,7 @@ _Clone repo to your local system:_
 
 1. Make a directory on your disk where you would like to clone the repo.
 
-2. Copy the repo link: https://github.com/apsocarras/airflow-review.git (available if you click the green "Code" dropdown button on this page).
+2. Copy the repo link: https://github.com/apsocarras/airflow-review2.git (available if you click the green "Code" dropdown button on this page).
 
 3. Open your terminal and change into the directory you made (`cd /path/to/new/directory`).
 
@@ -56,26 +56,24 @@ mkdir ./plugins ./logs # create subdirectories
 # Set the .env  
 echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
 ```
-_Start Airflow Container:_
-1. Start Docker by opening Docker Desktop (or [via CLI](https://docs.docker.com/config/daemon/start/))
-2. Run the following commands: 
-   
+_Start and run Airflow_
+We're now ready to test our file-sensing DAG (`cake.py`) in an Airflow Docker container. First start Docker by opening Docker Desktop (or [via CLI](https://docs.docker.com/config/daemon/start/)), then run the following:
 ```bash 
 # Initialize Airflow
 docker compose up airflow-init
 # Start Docker Container 
-docker compose up
+docker compose up 
+# Create a file connection
+./airflow.sh connections add --conn-type=fs --conn-extra='{"path": "/opt/airflow/data"}' data_fs
+# Start the dag
+./airflow.sh dags test cake.py 
+# Download data into the data directory
+cd ./data
+gsutil -m cp gs://data.datastack.academy/airflow_cr_2/votes.csv .
 ```
-_Create file connection:_
-```bash 
-# Open Airflow cli 
-./airflow.sh bash 
-# Create file connection: 
-airflow connections add --conn-type=fs --conn-extra='{"path": "/opt/airflow/data"}' data_fs
+After a few moments, the DAG's file sensor should detect the added file and run the rest of the tasks.
 
-```
 _Note_: The `airflow.sh` script comes from Apache directly, but `docker-compose` with `docker compose` (i.e. remove the `-`). This `-` is included in the script even the latest version of Airflow, even though the `docker compose` command is run without it.
-
 
 ## Known Bugs
 
