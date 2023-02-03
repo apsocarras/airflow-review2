@@ -1,7 +1,4 @@
-jupyterlab
-notebook
-jupyterthemes
-
+pandas
 # Airflow: 
 # AIRFLOW_VERSION=2.3.2 
 # PYTHON_VERSION=3.7 
