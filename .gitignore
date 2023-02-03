@@ -1,0 +1,5 @@
+plugins/
+logs/
+venv/
+.env
+data/
