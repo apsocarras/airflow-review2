@@ -1,4 +1,4 @@
-# _airflow-review_
+# _airflow-review2_
 
 #### By _**Alejandro Socarras**_
 
@@ -6,7 +6,7 @@
 
 ## Description
 
-Practicing XCOMs and file sensors in Airflow 
+Practicing XCOMs and file sensors in Airflow.
 
 ## Assignment Instructions: 
 
@@ -56,7 +56,8 @@ mkdir ./plugins ./logs # create subdirectories
 # Set the .env  
 echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
 ```
-_Start and run Airflow_
+_Start and run Airflow:_
+
 We're now ready to test our file-sensing DAG (`cake.py`) in an Airflow Docker container. First start Docker by opening Docker Desktop (or [via CLI](https://docs.docker.com/config/daemon/start/)), then run the following:
 ```bash 
 # Initialize Airflow
@@ -66,14 +67,18 @@ docker compose up
 # Create a file connection
 ./airflow.sh connections add --conn-type=fs --conn-extra='{"path": "/opt/airflow/data"}' data_fs
 # Start the dag
-./airflow.sh dags test cake.py 
+./airflow.sh dags trigger cake.py 
 # Download data into the data directory
 cd ./data
 gsutil -m cp gs://data.datastack.academy/airflow_cr_2/votes.csv .
 ```
-After a few moments, the DAG's file sensor should detect the added file and run the rest of the tasks.
+After a few moments, the DAG's file sensor should detect the added file and run the rest of the tasks. If you log into your Airflow UI you should see this:
 
-_Note_: The `airflow.sh` script comes from Apache directly, but `docker-compose` with `docker compose` (i.e. remove the `-`). This `-` is included in the script even the latest version of Airflow, even though the `docker compose` command is run without it.
+![DAG graph](./img/cake_dag.png)
+
+![DAG log](./img/log_image.png)
+
+_Note_: The `airflow.sh` script comes from Apache directly, but replaces `docker-compose` with `docker compose`. The '`-`' is included in the script even the latest version of Airflow, even though the `docker compose` command is run without it.
 
 ## Known Bugs
 
