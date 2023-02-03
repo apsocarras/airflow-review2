@@ -1,5 +1,6 @@
 import os 
 import csv 
+from datetime import datetime
 from collections import Counter
 from airflow.decorators import dag, task
 from airflow.sensors.filesystem import FileSensor 
@@ -41,27 +42,30 @@ def printWinner(valid_votes:list):
 
   print(f"The winning flavor is {winner}!")
 
-
-
-
-
 @dag(
    schedule_interval="@once",
    start_date=datetime.utcnow(),
    catchup=False,
    default_view='graph',
    is_paused_upon_creation=True,
-   tags=['', ''],
 )
-def <name_of_dag>():  # dag name derives from decorator function name; can also take parameter    
-   """"""
-   t1 = <func1>()  # task names derive from function names; modifies if called more than once
-   t2 = <func2>(t1)
 
+def cake():      
+  """"""
+  wait_for_file = FileSensor(
+       task_id='',
+       poke_interval=15,                   # check every 15 seconds
+       timeout=(30 * 60),                  # timeout after 30 minutes
+       mode='poke',                        # mode: poke, reschedule
+       filepath=FILENAME,                  # file path to check (relative to fs_conn)
+       fs_conn_id='data_fs',               # file system connection (root path)
+   )
 
-   t1 >> t2
+  getVotes_task = getVotes()  
+  printWinner_task = printWinner(getVotes_task)
 
-
-dag = <name_of_dag>()
+  wait_for_file >> getVotes_task >> printWinner_task
+  
+dag = cake()
 
 
