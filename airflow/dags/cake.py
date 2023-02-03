@@ -1,7 +1,6 @@
 import os 
 import csv 
-from datetime import datetime
-from airflow import DAG
+from collections import Counter
 from airflow.decorators import dag, task
 from airflow.sensors.filesystem import FileSensor 
 from airflow.hooks.filesystem import FSHook
@@ -34,10 +33,16 @@ def getVotes():
   return valid_votes
 
 @task
-def (<returned>): # in new syntax, callables can take regular arguments, not op_kwargs/op_args
-# Here, we have the parameter set to receive an XCom key called the 'return_value'
-   """"""
-   print(f"got XCom return value: {<returned>}")
+def printWinner(valid_votes:list): 
+  """Print flavor with most votes in valid_votes"""
+
+  counter = Counter(valid_votes)
+  winner = counter.most_common(1)[0]
+
+  print(f"The winning flavor is {winner}!")
+
+
+
 
 
 @dag(
